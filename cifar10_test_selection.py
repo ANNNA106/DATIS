@@ -172,7 +172,7 @@ def demo(data_type):
     
 
 if __name__ == '__main__':
-   
+    print("Testing on CIFAR10 dataset")
     demo('nominal')
     print("         =====================================           ")
     demo('corrupted')
