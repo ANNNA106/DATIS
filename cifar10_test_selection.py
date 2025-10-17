@@ -8,20 +8,34 @@ from DATIS.DATIS import DATIS_test_input_selection,DATIS_redundancy_elimination
 from keras.datasets import mnist
 import torch.nn.functional as F
 
-def get_features(model, x, device):
-    model.eval()
-    with torch.no_grad():
-        x = torch.tensor(x).permute(0, 3, 1, 2).to(device)  # (N,H,W,C) → (N,C,H,W)
-        feats = model.representation(x)
-        return feats.cpu().numpy()
+from tqdm import tqdm
 
-def get_softmax(model, x, device):
+
+def get_features(model, x, device, batch_size=256):
     model.eval()
+    feats_list = []
     with torch.no_grad():
-        x = torch.tensor(x).permute(0, 3, 1, 2).to(device)
-        logits = model(x)
-        probs = F.softmax(logits, dim=1)
-        return probs.cpu().numpy()
+        for i in tqdm(range(0, len(x), batch_size), desc="Extracting features"):
+            batch = torch.tensor(x[i:i+batch_size]).permute(0,3,1,2).to(device)
+            feats = model.representation(batch)
+            feats_list.append(feats.cpu())
+            del batch, feats
+            torch.cuda.empty_cache()
+    return torch.cat(feats_list, dim=0).numpy()
+
+
+def get_softmax(model, x, device, batch_size=256):
+    model.eval()
+    probs_list = []
+    with torch.no_grad():
+        for i in tqdm(range(0, len(x), batch_size), desc="Computing softmax"):
+            batch = torch.tensor(x[i:i+batch_size]).permute(0,3,1,2).to(device)
+            logits = model(batch)
+            probs = F.softmax(logits, dim=1)
+            probs_list.append(probs.cpu())
+            del batch, probs, logits
+            torch.cuda.empty_cache()
+    return torch.cat(probs_list, dim=0).numpy()
 
 
 def get_faults(sample, mis_ind_test, Clustering_labels):
