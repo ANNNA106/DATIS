@@ -3,8 +3,6 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 import numpy as np
 import torch
 from model.resnet import resnet18  # <-- Use your custom CIFAR version
-from keras.models import load_model
-from keras import Model
 import copy
 from DATIS.DATIS import DATIS_test_input_selection,DATIS_redundancy_elimination
 from keras.datasets import mnist
