@@ -137,7 +137,7 @@ def demo(data_type):
         x_test, y_test = load_data_corrupted()
         cluster_path ='./cluster_data/ResNet32_cifar100_corrupted'
         
-    checkpoint_path = './weights/epoch_200.pth'
+    checkpoint_path = '/content/drive/MyDrive/cka_models/resnet18_CIFAR10/noisy/random_0/epochs_200_tune_hp8/epoch_200.pth'
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # model setup
     model = resnet18(num_classes=10)
