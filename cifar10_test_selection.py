@@ -138,7 +138,7 @@ def demo(data_type):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     # === Model setup ===
-    checkpoint_path = './weights/epoch_200.pth'
+    checkpoint_path = '/content/drive/MyDrive/DATIS/weights/epoch_200.pth'
     model = resnet18(num_classes=10)
     model.conv1 = torch.nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
     model.maxpool = torch.nn.Identity()
