@@ -12,6 +12,41 @@ import torchvision
 import torchvision.transforms as transforms
 
 
+# ========================== METRICS ==========================
+
+def TRC(sorted_labels, budget):
+    num_bug = np.sum(sorted_labels == 1)
+    tmp = sorted_labels[:budget]
+    bug_index = np.where(tmp == 1)[0]
+    m = len(bug_index)
+    return m / min(budget, num_bug) if num_bug > 0 else 0
+
+def ATRC(sorted_labels, budget=1000):
+    total = 0
+    trcs = []
+    num_bug = np.sum(sorted_labels == 1)
+    if num_bug == 0:
+        return 0, []
+    for i in range(1, min(budget, len(sorted_labels))):
+        trc = TRC(sorted_labels, i)
+        total += trc
+        trcs.append(trc)
+    for i in range(budget, len(sorted_labels)):
+        trcs.append(TRC(sorted_labels, i))
+    return total / (budget - 1), trcs
+
+def RAUC(sorted_labels, num=1000):
+    sorted_labels = sorted_labels[:num]
+    n = len(sorted_labels)
+    bug_index = np.where(sorted_labels == 1)[0]
+    m = len(bug_index)
+    if m == 0:
+        return 0
+    true = np.cumsum(sorted_labels)
+    ideal = (n - m) * m + (m + 1) * m / 2
+    return np.sum(true) / ideal
+
+
 # ========================== FEATURE UTILITIES ==========================
 
 def get_features(model, x, device, batch_size=128):
@@ -187,7 +222,26 @@ def demo(data_type):
         budget_ratio_list, rank_lst, test_support_output, y_test
     )
 
-    calculate_rate(budget_ratio_list, test_support_output, x_test, rank_lst, ans, cluster_path)
+    # Create correctness (bug-revealing) vector based on DATIS ranking
+    sorted_labels = np.zeros(len(x_test))
+    mis_test_ind = np.load(Path(cluster_path) / "mis_test_ind.npy")
+    
+    # Mark misclassified samples as bug-revealing (1)
+    sorted_labels[mis_test_ind] = 1
+    
+    # Reorder according to DATIS ranking
+    sorted_labels = sorted_labels[rank_lst]
+    print("\n===== DATIS EVALUATION METRICS =====")
+    for k in [100, 200, 500, 1000, len(x_test)]:
+        rauc_k = RAUC(sorted_labels, num=k)
+        print(f"RAUC-{k}: {rauc_k:.4f}")
+    
+    atrc_mean, trcs = ATRC(sorted_labels, budget=1000)
+    print(f"Mean ATRC (up to 1000): {atrc_mean:.4f}")
+
+
+
+    # calculate_rate(budget_ratio_list, test_support_output, x_test, rank_lst, ans, cluster_path)
 
 
 # ========================== ENTRY POINT ==========================
