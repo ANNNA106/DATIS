@@ -95,9 +95,9 @@ def load_data():
                              (0.2023, 0.1994, 0.2010))
     ])
     trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
-                                            download=False, transform=transform)
+                                            download=True, transform=transform)
     testset = torchvision.datasets.CIFAR10(root='./data', train=False,
-                                           download=False, transform=transform)
+                                           download=True, transform=transform)
 
     x_train = trainset.data.astype('float32') / 255.0  # (50000,32,32,3)
     y_train = np.array(trainset.targets)
