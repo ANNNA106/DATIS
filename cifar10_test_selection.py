@@ -124,12 +124,12 @@ def demo(data_type):
     """Run DATIS prioritization pipeline with feature caching."""
     if data_type == 'nominal':
         (x_train, y_train), (x_test, y_test) = load_data()
-        cluster_path = '/content/drive/MyDrive/DATIS/cluster_data/ResNet32_cifar10_nominal'
+        cluster_path = '/content/drive/MyDrive/DATIS/cluster_data/ResNet18_cifar10_nominal'
         cache_dir = Path("/content/drive/MyDrive/DATIS/saved_features/cifar10_nominal")
     elif data_type == 'corrupted':
         (x_train, y_train), _ = load_data()
         x_test, y_test = load_data_corrupted()
-        cluster_path = '/content/drive/MyDrive/DATIS/cluster_data/ResNet32_cifar10_corrupted'
+        cluster_path = '/content/drive/MyDrive/DATIS/cluster_data/ResNet18_cifar10_corrupted'
         cache_dir = Path("/content/drive/MyDrive/DATIS/saved_features/cifar10_corrupted")
     else:
         raise ValueError("data_type must be 'nominal' or 'corrupted'")
