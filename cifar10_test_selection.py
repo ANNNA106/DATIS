@@ -108,8 +108,8 @@ def load_data():
 
 def load_data_corrupted():
     """Load pre-created corrupted CIFAR-10 dataset (CIFAR-10-C formatted)."""
-    data_corrupted_file = "./corrupted_data/cifar10/data_corrupted.npy"
-    label_corrupted_file = "./corrupted_data/cifar10/label_corrupted.npy"
+    data_corrupted_file = "/content/drive/MyDrive/DATIS/corrupted_data/cifar10/data_corrupted.npy"
+    label_corrupted_file = "/content/drive/MyDrive/DATIS/corrupted_data/cifar10/label_corrupted.npy"
 
     x_test_ood = np.load(data_corrupted_file)
     y_test_ood = np.load(label_corrupted_file)
@@ -124,13 +124,13 @@ def demo(data_type):
     """Run DATIS prioritization pipeline with feature caching."""
     if data_type == 'nominal':
         (x_train, y_train), (x_test, y_test) = load_data()
-        cluster_path = './cluster_data/ResNet32_cifar100_nominal'
-        cache_dir = Path("./saved_features/cifar10_nominal")
+        cluster_path = '/content/drive/MyDrive/DATIS/cluster_data/ResNet32_cifar10_nominal'
+        cache_dir = Path("/content/drive/MyDrive/DATIS/saved_features/cifar10_nominal")
     elif data_type == 'corrupted':
         (x_train, y_train), _ = load_data()
         x_test, y_test = load_data_corrupted()
-        cluster_path = './cluster_data/ResNet32_cifar100_corrupted'
-        cache_dir = Path("./saved_features/cifar10_corrupted")
+        cluster_path = '/content/drive/MyDrive/DATIS/cluster_data/ResNet32_cifar10_corrupted'
+        cache_dir = Path("/content/drive/MyDrive/DATIS/saved_features/cifar10_corrupted")
     else:
         raise ValueError("data_type must be 'nominal' or 'corrupted'")
 
